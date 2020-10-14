@@ -12,8 +12,9 @@ import com.github.josmilan.myapplication.R;
 
 public class EmailListAdapter extends RecyclerView.Adapter<EmailListAdapter.ViewHolder> {
 
-    public EmailListAdapter(){
-
+    String[] mIdList = {};
+    public EmailListAdapter(String[] idList){
+        mIdList = idList;
     }
 
     @NonNull
@@ -25,12 +26,17 @@ public class EmailListAdapter extends RecyclerView.Adapter<EmailListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
+        holder.tvEmail.setText(mIdList[position]);
     }
 
     @Override
     public int getItemCount() {
-        return 5;
+        return mIdList.length;
+    }
+
+    public void setList(String[] idList) {
+        mIdList = idList;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

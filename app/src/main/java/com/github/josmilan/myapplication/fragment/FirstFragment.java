@@ -1,4 +1,4 @@
-package com.github.josmilan.myapplication;
+package com.github.josmilan.myapplication.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,16 +9,19 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.josmilan.myapplication.R;
 import com.github.josmilan.myapplication.adapter.EmailListAdapter;
+import com.github.josmilan.myapplication.fragment.dailog.AddEmailDialogFragment;
+import com.github.josmilan.myapplication.utils.PreferenceUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
-public class FirstFragment extends Fragment {
+public class FirstFragment extends Fragment implements AddEmailDialogFragment.OnEmailAddedListener {
 
     EmailListAdapter adapter;
 
     FloatingActionButton fab;
     RecyclerView rvEmailList;
+    String[] idList = {};
 
     @Override
     public View onCreateView(
@@ -34,7 +37,19 @@ public class FirstFragment extends Fragment {
 
         initView(view);
         initListener();
+        initValues();
 
+    }
+
+    private void initValues() {
+        String[] i = PreferenceUtils.getEmailIdList();
+
+        if (i != null && i.length > 0 && i[0] != "") {
+            idList = PreferenceUtils.getEmailIdList();
+        } else {
+            AddEmailDialogFragment editNameDialog = new AddEmailDialogFragment();
+            editNameDialog.show(getChildFragmentManager(), "fragment_add_email");
+        }
         setRecyclerView();
     }
 
@@ -42,8 +57,8 @@ public class FirstFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                AddEmailDialogFragment editNameDialog = new AddEmailDialogFragment();
+                editNameDialog.show(getChildFragmentManager(), "fragment_add_email");
             }
         });
     }
@@ -54,7 +69,13 @@ public class FirstFragment extends Fragment {
     }
 
     private void setRecyclerView() {
-        adapter = new EmailListAdapter();
+        adapter = new EmailListAdapter(idList);
         rvEmailList.setAdapter(adapter);
+    }
+
+    @Override
+    public void onEmailAdded() {
+        idList = PreferenceUtils.getEmailIdList();
+        adapter.setList(idList);
     }
 }
